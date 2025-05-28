@@ -1,7 +1,7 @@
 // send call data -> function dispatch -> function
 
 /* Interface -> pass function sig */ 
-#define function updateHorseNumber(uint256) nonpayable returns()
+#define function updateNumberOfHorses(uint256) nonpayable returns()
 #define function readNumberOfHorses() view returns(uint256)
 
 #define constant NUMBER_OF_HORSES_STORAGE_SLOT = FREE_STORAGE_POINTER() // 0
@@ -9,7 +9,7 @@
 #define macro MAIN() = takes(0) returns(0){
     0x00 calldataload 0xe0 shr              // [function_selector]
     // updateNumberOfHorses, 0xcdfead2e
-    dup1 __FUNC_SIG(updateHorseNumber) eq updateJump jumpi     // [function_selector]
+    dup1 __FUNC_SIG(updateNumberOfHorses) eq updateJump jumpi     // [function_selector]
     // readNumberOfHorses, 0xe026c017
     __FUNC_SIG(readNumberOfHorses) eq readJump jumpi
 

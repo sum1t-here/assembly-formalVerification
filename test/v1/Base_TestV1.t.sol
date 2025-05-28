@@ -15,4 +15,9 @@ abstract contract Base_TestV1 is Test {
         uint256 initalValue = horseStore.readNumberOfHorses();
         assertEq(initalValue, 0);
     }
+
+    function testWriteValue(uint256 numberOfHorses) public {
+        horseStore.updateNumberOfHorses(numberOfHorses);
+        assertEq(horseStore.readNumberOfHorses(), numberOfHorses);
+    }
 }
