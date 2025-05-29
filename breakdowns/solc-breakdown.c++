@@ -109,15 +109,16 @@ PUSH1 0x4a          // [0x4a, func_selector]
 PUSH1 0x04          // [0x04, 0x4a, func_selector]
 DUP1                // [0x04, 0x04, 0x4a, func_selector]
 CALLDATASIZE        // [calldatasize, 0x04, 0x04, 0x4a, func_selector]
-SUB                 
-DUP2
-ADD
-SWAP1
-PUSH1 0x46
-SWAP2
-SWAP1
-PUSH1 0xa9
-JUMP
+SUB                 // [calldatasize - 0x04 (arg_length), 0x04, 0x4a, func_selector]
+DUP2                // [0x04, arg_length, 0x04, 0x4a, func_selector]
+ADD                 // [0x04 + arg_length, 0x04, 0x4a, func_selector]
+SWAP1               // [0x04, offset + arg_length, 0x4a, func_selector]
+PUSH1 0x46          // [0x46, 0x04, offset + arg_length, 0x4a, func_selector]
+SWAP2               // offset + arg_length, 0x04, 0x46, 0x4a, func_selector]
+SWAP1               // [0x04, coffset + arg_length, 0x46, 0x4a, func_selector]
+PUSH1 0xa9          // [0xa9, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+JUMP                // jump to 0xa9
+
 JUMPDEST
 PUSH1 0x66
 JUMP
@@ -127,6 +128,7 @@ JUMPDEST
 PUSH1 0x52
 PUSH1 0x6f
 JUMP
+
 JUMPDEST
 PUSH1 0x40
 MLOAD
@@ -135,6 +137,7 @@ SWAP2
 SWAP1
 PUSH1 0xdc
 JUMP
+
 JUMPDEST
 PUSH1 0x40
 MLOAD
@@ -143,6 +146,7 @@ SWAP2
 SUB
 SWAP1
 RETURN
+
 JUMPDEST
 DUP1
 PUSH0
@@ -152,6 +156,7 @@ SSTORE
 POP
 POP
 JUMP
+
 JUMPDEST
 PUSH0
 PUSH0
@@ -160,10 +165,12 @@ SWAP1
 POP
 SWAP1
 JUMP
+
 JUMPDEST
 PUSH0
 PUSH0
 REVERT
+
 JUMPDEST
 PUSH0
 DUP2
@@ -173,11 +180,13 @@ SWAP2
 SWAP1
 POP
 JUMP
+
 JUMPDEST
 PUSH1 0x8b
 DUP2
 PUSH1 0x7b
 JUMP
+
 JUMPDEST
 DUP2
 EQ
@@ -186,9 +195,12 @@ JUMPI
 PUSH0
 PUSH0
 REVERT
+
 JUMPDEST
 POP
 JUMP
+
+// 0x97
 JUMPDEST
 PUSH0
 DUP2
@@ -199,35 +211,47 @@ PUSH1 0xa3
 DUP2
 PUSH1 0x84
 JUMP
+
 JUMPDEST
 SWAP3
 SWAP2
 POP
 POP
 JUMP
+
+// 0xa9
+JUMPDEST                            // [0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+// 0x04 = calldata offset (usually 4 bytes, after function selector)
+// offset + arg_length = end of calldata slice (offset + length of args)
+// 0x46 = destination memory offset for calldatacopy
+// 0x4a = some memory related offset (possibly size or scratch space)
+// func_selector = original function selector from calldata
+PUSH0                               // [0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH1 0x20                          // [0x20 ,0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+DUP3                                // [0x04 ,0x20 ,0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+DUP5                                // [offset + arg_length, 0x04 ,0x20 ,0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+SUB                                 // [arg_length, 0x20 ,0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+SLT                                 // [arg_length < 0x20 ,0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+ISZERO                              // [(arg_length < 0x20 == 0) , 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH1 0xbb                          // [0xbb ,(arg_length < 0x20 == 0) , 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+JUMPI                               // conditional jump to 0xbb
+
+PUSH1 0xba                          // [0xba ,0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH1 0x77                          // [0x77, 0xba ,0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+JUMP                                // jump to 0x77
+
 JUMPDEST
-PUSH0
-PUSH1 0x20
-DUP3
-DUP5
-SUB
-SLT
-ISZERO
-PUSH1 0xbb
-JUMPI
-PUSH1 0xba
-PUSH1 0x77
-JUMP
-JUMPDEST
-JUMPDEST
-PUSH0
-PUSH1 0xc6
-DUP5
-DUP3
-DUP6
-ADD
-PUSH1 0x97
-JUMP
+// 0xbb
+JUMPDEST                            // [0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH0                               // [0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH1 0xc6                          // [0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+DUP5                                // [offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+DUP3                                // [0, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+DUP6                                // [0x04, 0, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+ADD                                 // [0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH1 0x97                          // [0x97, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+JUMP                                // jump to 0x97
+
 JUMPDEST
 SWAP2
 POP
@@ -237,17 +261,20 @@ SWAP2
 POP
 POP
 JUMP
+
 JUMPDEST
 PUSH1 0xd6
 DUP2
 PUSH1 0x7b
 JUMP
+
 JUMPDEST
 DUP3
 MSTORE
 POP
 POP
 JUMP
+
 JUMPDEST
 PUSH0
 PUSH1 0x20
@@ -262,6 +289,7 @@ ADD
 DUP5
 PUSH1 0xcf
 JUMP
+
 JUMPDEST
 SWAP3
 SWAP2
