@@ -1,12 +1,15 @@
-//1.  0x6080604052
-// 348015600e575f5ffd5b506101298061001c5f395ff3fe6080604052348015600e
-// 575f5ffd5b50600436106030575f3560e01c806367d41eca146034578063e026c01714604c575b5f5
-// ffd5b604a60048036038101906046919060a9565b6066565b005b6052606f565b604051605d919060
-// dc565b60405180910390f35b805f8190555050565b5f5f54905090565b5f5ffd5b5f8190509190505
+//1.  0x6080604052 348015600e575f5ffd5b506101298061001c5f395ff3
+
+//2. fe6080604052348015600e575f5ffd5b50600436106030575f3560e01c
+//   806367d41eca146034578063e026c01714604c575b5f5ffd5b604a6004
+//   8036038101906046919060a9565b6066565b005b6052606f565b604051
+//   605d919060 dc565b60405180910390f35b805f8190555050565b5f5f54905090565b5f5ffd5b5f8190509190505
 // 65b608b81607b565b81146094575f5ffd5b50565b5f8135905060a3816084565b92915050565b5f60
 // 20828403121560bb5760ba6077565b5b5f60c6848285016097565b91505092915050565b60d681607b
-// 565b82525050565b5f60208201905060ed5f83018460cf565b9291505056fea2646970667358221220
-// ab4fb2620b8cbd118c3edf223dec46659496a851b292af84ecf9fda6d819f7a764736f6c634300081c0033
+// 565b82525050565b5f60208201905060ed5f83018460cf565b9291505056
+
+//3. fea2646970667358221220ab4fb2620b8cbd118c3edf223dec46659496a851b292af84ecf9fd
+//   a6d819f7a764736f6c634300081c0033
 
 // 3 sections:
 // 1. Contract creation
@@ -171,27 +174,31 @@ PUSH0
 PUSH0
 REVERT
 
-JUMPDEST
-PUSH0
-DUP2
-SWAP1
-POP
-SWAP2
-SWAP1
-POP
-JUMP
+// 0x7b
+JUMPDEST                 // [arg_data, 0x8b, arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH0                    // [0, arg_data, 0x8b, arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+DUP2                     // [arg_data, 0, arg_data, 0x8b, arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+SWAP1                    // [0,arg_data,  arg_data, 0x8b, arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+POP                      // [arg_data,  arg_data, 0x8b, arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+SWAP2                    // [0x8b, arg_data,  arg_data,  arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+SWAP1                    // [arg_data, 0x8b, arg_data,  arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+POP                      // [0x8b, arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+JUMP                     // jump to 0x8b
 
-JUMPDEST
-PUSH1 0x8b
-DUP2
-PUSH1 0x7b
-JUMP
+// 0x84
+JUMPDEST                        // [arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH1 0x8b                      // [0x8b, arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+DUP2                            // [arg_data, 0x8b, arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH1 0x7b                      // [0x7b, arg_data, 0x8b, arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+JUMP                            // jump to 0x7b
 
-JUMPDEST
+// 0x8b
+JUMPDEST                        // [arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
 DUP2
 EQ
 PUSH1 0x94
 JUMPI
+
 PUSH0
 PUSH0
 REVERT
@@ -201,16 +208,16 @@ POP
 JUMP
 
 // 0x97
-JUMPDEST
-PUSH0
-DUP2
-CALLDATALOAD
-SWAP1
-POP
-PUSH1 0xa3
-DUP2
-PUSH1 0x84
-JUMP
+JUMPDEST                                // [0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH0                                   // [0, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+DUP2                                    // [0x04, 0, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+CALLDATALOAD                            // [arg_data, 0, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+SWAP1                                   // [0, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+POP                                     // [arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH1 0xa3                              // [0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+DUP2                                    // [arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+PUSH1 0x84                              // [0x84, arg_data, 0xa3, arg_data, 0x04, offset + arg_length, 0xc6, 0, 0, 0x04, offset + arg_length, 0x46, 0x4a, func_selector]
+JUMP                                    // jump to 0x84
 
 JUMPDEST
 SWAP3
@@ -296,6 +303,8 @@ SWAP2
 POP
 POP
 JUMP
+
+// 3. Metadata
 INVALID
 LOG2
 PUSH5 0x6970667358
